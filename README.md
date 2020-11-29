@@ -16,11 +16,27 @@ sudo apt install maven
 mvn --version
 ``` 
 #### Passos para executar o projeto
-Na pasta do projeto execute o comando para baixar as dependências do projeto
+Instalar dependências: Na pasta do projeto execute o comando para baixar as dependências do projeto
 ```
 mvn install
 ``` 
-Na pasta do projeto execute o comando subir o projeto
+Executar o projeto: Na pasta do projeto execute o comando subir o projeto
+
 ```
 mvn spring-boot:run
 ``` 
+Executar os testes do projeto: Na pasta do projeto execute o comando executar os testes do projeto
+
+```
+mvn spring-boot:run test
+``` 
+#### Acesso ao banco de dados
+O projeto utiliza banco de dados H2 Database Engine
+##### Detalhes conexão
+**Url :** http://localhost:8080/h2-console
+
+**JDBC Url :** jdbc:h2:mem:banco
+
+**User Name :** desenvolvimento
+
+**Password :** acessolivre
