@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: createTableProduto
+      author: Daniel
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: produto
+      changes:
+        - createTable:
+            tableName: produto
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: produto_pk
+              - column:
+                  name: sku
+                  type: VARCHAR(15)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: descricao
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unidade
+                  type: NUMBER(6,2)
+              - column:
+                  name: unidademedida
+                  type: VARCHAR(15)
+                  constraints:
+                    nullable: false
