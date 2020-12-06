@@ -16,9 +16,9 @@ class ProdutoServiceTest {
 
     @Test
     void contextLoads() {
-        Produto p = new Produto(1L, "1", "Primeiro produto", "METRO", BigDecimal.valueOf(10.12));
+        Produto p = new Produto(null, "1", "Primeiro produto", "METRO", BigDecimal.valueOf(10.12));
         Produto salvo = produtoService.salvar(p);
-        Produto recuperado = produtoService.findById(1L);
+        Produto recuperado = produtoService.findById(salvo.getId());
         Assertions.assertEquals(salvo, recuperado);
     }
 }
