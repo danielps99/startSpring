@@ -1,5 +1,28 @@
 databaseChangeLog:
   - changeSet:
+      id: createTableRevInfo
+      author: Daniel
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: revinfo
+      changes:
+        - createTable:
+            tableName: revinfo
+            columns:
+              - column:
+                  name: rev
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: revtstmp
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+  - changeSet:
       id: createTableProduto
       author: Daniel
       preConditions:
@@ -37,3 +60,50 @@ databaseChangeLog:
                   type: VARCHAR(15)
                   constraints:
                     nullable: false
+  - changeSet:
+      id: createTableProdutoAud
+      author: Daniel
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: produto_aud
+      changes:
+        - createTable:
+            tableName: produto_aud
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rev
+                  type: INT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: revtype
+                  type: TINYINT
+              - column:
+                  name: sku
+                  type: VARCHAR(15)
+              - column:
+                  name: descricao
+                  type: VARCHAR(255)
+              - column:
+                  name: unidade
+                  type: NUMBER(6,2)
+              - column:
+                  name: unidademedida
+                  type: VARCHAR(15)
+  - changeSet:
+      id: createPrimaryKeyProdutoAud
+      author: Daniel
+      changes:
+        - addPrimaryKey:
+            columnNames: id, rev
+            constraintName: produto_aud_pk
+            tableName: produto_aud
+            validate: true

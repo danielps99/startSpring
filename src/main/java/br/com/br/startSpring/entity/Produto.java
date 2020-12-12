@@ -1,10 +1,15 @@
 package br.com.br.startSpring.entity;
 
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
+@Audited
+@AuditTable(value = "produto_aud")
 @Entity
 public class Produto {
 
