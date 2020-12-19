@@ -94,6 +94,11 @@ class ProdutoServiceTest {
     }
 
     private Produto instanciarProduto() {
-        return new Produto(null, "1", "Primeiro produto", "METRO", BigDecimal.valueOf(10.12));
+        return Produto.builder()
+                .sku("1")
+                .descricao("Primeiro produto")
+                .unidadeMedida("METRO")
+                .unidade(BigDecimal.valueOf(10.12))
+                .build();
     }
 }
