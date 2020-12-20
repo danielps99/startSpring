@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProdutoService {
 
@@ -17,6 +19,10 @@ public class ProdutoService {
         return jpaRepository.findById(id).orElseThrow(
                 () -> new GenericException("Produto não encontrado.")
         );
+    }
+
+    public List<Produto> findAll() {
+        return jpaRepository.findAll();
     }
 
     public Produto salvar(Produto produto) {
