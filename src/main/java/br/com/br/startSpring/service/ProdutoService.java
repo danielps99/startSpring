@@ -25,9 +25,10 @@ public class ProdutoService {
         return jpaRepository.findAll();
     }
 
-    public Produto salvar(Produto produto) {
+    public Long salvar(Produto produto) {
         try {
-            return jpaRepository.save(produto);
+            Produto salvo = jpaRepository.save(produto);
+            return salvo.getId();
         } catch (Exception e) {
             e.printStackTrace();
             throw new GenericException("Erro ao salvar produto.");

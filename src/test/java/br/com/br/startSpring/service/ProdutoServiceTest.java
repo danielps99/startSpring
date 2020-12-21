@@ -20,15 +20,17 @@ class ProdutoServiceTest {
 
     @Test
     void criarProduto() {
-        Produto salvo = produtoService.salvar(instanciarProduto());
-        Produto recuperado = produtoService.findById(salvo.getId());
-        assertEquals(salvo, recuperado);
+        Produto produtoNovo = instanciarProduto();
+        Long idSalvo = produtoService.salvar(produtoNovo);
+        Produto recuperado = produtoService.findById(idSalvo);
+        assertEquals(produtoNovo, recuperado);
     }
 
     @Test
     void recuperarProduto() {
-        Produto salvo = produtoService.salvar(instanciarProduto());
-        Produto recuperado = produtoService.findById(salvo.getId());
+        Produto produtoNovo = instanciarProduto();
+        Long idSalvo = produtoService.salvar(produtoNovo);
+        Produto recuperado = produtoService.findById(idSalvo);
 
         assertEquals(recuperado.getSku(), "1");
         assertEquals(recuperado.getDescricao(), "Primeiro produto");
@@ -48,11 +50,14 @@ class ProdutoServiceTest {
 
     @Test
     void alterarProduto() {
-        Produto salvo = produtoService.salvar(instanciarProduto());
-        Produto recuperado = produtoService.findById(salvo.getId());
+        Produto produtoNovo = instanciarProduto();
+        Long idSalvo = produtoService.salvar(produtoNovo);
+
+        Produto recuperado = produtoService.findById(idSalvo);
         recuperado.setDescricao("Descrição modificada");
-        Produto editado = produtoService.salvar(recuperado);
-        assertEquals(editado.getDescricao(), "Descrição modificada");
+        produtoService.salvar(recuperado);
+        Produto editadoRecuperado = produtoService.findById(idSalvo);
+        assertEquals(editadoRecuperado.getDescricao(), "Descrição modificada");
     }
 
     @Test
@@ -67,15 +72,17 @@ class ProdutoServiceTest {
 
     @Test
     void removerProduto() {
-        Produto salvo = produtoService.salvar(instanciarProduto());
-        Produto recuperadoAntesDeletar = produtoService.findById(salvo.getId());
+        Produto produtoNovo = instanciarProduto();
+        Long idSalvo = produtoService.salvar(produtoNovo);
+
+        Produto recuperadoAntesDeletar = produtoService.findById(idSalvo);
         assertNotNull(recuperadoAntesDeletar);
 
-        produtoService.removerById(salvo.getId());
+        produtoService.removerById(idSalvo);
 
         Produto tentativaRecuperar = null;
         try {
-            tentativaRecuperar = produtoService.findById(salvo.getId());
+            tentativaRecuperar = produtoService.findById(idSalvo);
         } catch (Exception e) {
             assertTrue(e instanceof GenericException);
             assertEquals(e.getMessage(), "Produto não encontrado.");

@@ -16,7 +16,7 @@ public class ProdutoController {
 
     @PostMapping("/produto")
     @ResponseBody
-    public Produto save(@RequestBody Produto produto) {
+    public Long save(@RequestBody Produto produto) {
         return service.salvar(produto);
     }
 
