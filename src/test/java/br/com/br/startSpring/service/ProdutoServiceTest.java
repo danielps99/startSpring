@@ -1,6 +1,6 @@
 package br.com.br.startSpring.service;
 
-import br.com.br.startSpring.entity.Produto;
+import br.com.br.startSpring.dto.ProdutoDto;
 import br.com.br.startSpring.exception.GenericException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,17 +20,20 @@ class ProdutoServiceTest {
 
     @Test
     void criarProduto() {
-        Produto produtoNovo = instanciarProduto();
+        ProdutoDto produtoNovo = instanciarProduto();
         Long idSalvo = produtoService.salvar(produtoNovo);
-        Produto recuperado = produtoService.findById(idSalvo);
-        assertEquals(produtoNovo, recuperado);
+        ProdutoDto recuperado = produtoService.findById(idSalvo);
+        assertEquals(produtoNovo.getSku(), recuperado.getSku());
+        assertEquals(produtoNovo.getDescricao(), recuperado.getDescricao());
+        assertEquals(produtoNovo.getUnidade(), recuperado.getUnidade());
+        assertEquals(produtoNovo.getUnidadeMedida(), recuperado.getUnidadeMedida());
     }
 
     @Test
     void recuperarProduto() {
-        Produto produtoNovo = instanciarProduto();
+        ProdutoDto produtoNovo = instanciarProduto();
         Long idSalvo = produtoService.salvar(produtoNovo);
-        Produto recuperado = produtoService.findById(idSalvo);
+        ProdutoDto recuperado = produtoService.findById(idSalvo);
 
         assertEquals(recuperado.getSku(), "1");
         assertEquals(recuperado.getDescricao(), "Primeiro produto");
@@ -50,13 +53,13 @@ class ProdutoServiceTest {
 
     @Test
     void alterarProduto() {
-        Produto produtoNovo = instanciarProduto();
+        ProdutoDto produtoNovo = instanciarProduto();
         Long idSalvo = produtoService.salvar(produtoNovo);
 
-        Produto recuperado = produtoService.findById(idSalvo);
+        ProdutoDto recuperado = produtoService.findById(idSalvo);
         recuperado.setDescricao("Descrição modificada");
         produtoService.salvar(recuperado);
-        Produto editadoRecuperado = produtoService.findById(idSalvo);
+        ProdutoDto editadoRecuperado = produtoService.findById(idSalvo);
         assertEquals(editadoRecuperado.getDescricao(), "Descrição modificada");
     }
 
@@ -72,15 +75,15 @@ class ProdutoServiceTest {
 
     @Test
     void removerProduto() {
-        Produto produtoNovo = instanciarProduto();
+        ProdutoDto produtoNovo = instanciarProduto();
         Long idSalvo = produtoService.salvar(produtoNovo);
 
-        Produto recuperadoAntesDeletar = produtoService.findById(idSalvo);
+        ProdutoDto recuperadoAntesDeletar = produtoService.findById(idSalvo);
         assertNotNull(recuperadoAntesDeletar);
 
         produtoService.removerById(idSalvo);
 
-        Produto tentativaRecuperar = null;
+        ProdutoDto tentativaRecuperar = null;
         try {
             tentativaRecuperar = produtoService.findById(idSalvo);
         } catch (Exception e) {
@@ -100,8 +103,8 @@ class ProdutoServiceTest {
         }
     }
 
-    private Produto instanciarProduto() {
-        return Produto.builder()
+    private ProdutoDto instanciarProduto() {
+        return ProdutoDto.builder()
                 .sku("1")
                 .descricao("Primeiro produto")
                 .unidadeMedida("METRO")

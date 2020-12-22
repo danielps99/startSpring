@@ -1,6 +1,6 @@
 package br.com.br.startSpring.controller;
 
-import br.com.br.startSpring.entity.Produto;
+import br.com.br.startSpring.dto.ProdutoDto;
 import br.com.br.startSpring.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,19 +16,19 @@ public class ProdutoController {
 
     @PostMapping("/produto")
     @ResponseBody
-    public Long save(@RequestBody Produto produto) {
-        return service.salvar(produto);
+    public Long save(@RequestBody ProdutoDto dto) {
+        return service.salvar(dto);
     }
 
     @GetMapping("/produto")
     @ResponseBody
-    public List<Produto> findAll() {
+    public List<ProdutoDto> findAll() {
         return service.findAll();
     }
 
     @GetMapping("/produto/{id}")
     @ResponseBody
-    public Produto findById(@PathVariable Long id) {
+    public ProdutoDto findById(@PathVariable Long id) {
         return service.findById(id);
     }
 
