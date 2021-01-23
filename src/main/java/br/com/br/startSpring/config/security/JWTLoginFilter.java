@@ -16,9 +16,13 @@ import java.io.IOException;
 import java.util.Collections;
 
 public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
-    protected JWTLoginFilter(String url, AuthenticationManager authManager) {
+
+    private TokenAuthenticationService tokenAuthenticationService;
+
+    protected JWTLoginFilter(String url, AuthenticationManager authManager, TokenAuthenticationService tokenAuthenticationService) {
         super(new AntPathRequestMatcher(url));
         setAuthenticationManager(authManager);
+        this.tokenAuthenticationService = tokenAuthenticationService;
     }
 
     @Override
@@ -38,6 +42,6 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, Authentication auth) {
-        TokenAuthenticationService.addAuthentication(response, auth.getName());
+        tokenAuthenticationService.addAuthentication(response, auth.getName());
     }
 }
