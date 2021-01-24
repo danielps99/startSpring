@@ -1,3 +1,10 @@
+#### commit 44700db969efcf7fd19b6024cb477846602c65f2
+
+    Autenticação via JWT e autorização.
+      -> Configurado dois usuários com perfis de acesso (ADMIN, EDITOR) em memória.
+      -> Autorização no ProdutoControler de acordo com o perfil de acesso do usuário.
+      -> TokenAuthenticationService deixou de ser estático para ser um service @Service.
+
 #### commit 7c6ee65957f60df7a629e0513fdd52ee042bbe7c
 
     Autenticação jwt com usuários em memória
@@ -29,6 +36,16 @@
 #### commit 0e56718455bb44738fbf0f484289debb3fc6b500
 
     Definir profile dev e test
+    Os profiles funcionan ao executar com 
+            mvn srping-boot:run
+        e 
+            mvn spring-boot:test 
+        para setar o profile, ao executar StartSpringApplication no Intelij, passe o parmetro: 
+            --spring.profiles.active=dev 
+    Apesar de funcionar, no commit 'Corrigindo file banco h2', troquei a linha:
+        spring.datasource.url=jdbc:h2:~/file:banco
+    por:
+        spring.datasource.url=jdbc:h2:file:~/banco
 
 #### commit 2277157d6d8d623ed33befb924a50cf7d3cc8931
 
