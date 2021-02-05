@@ -1,4 +1,4 @@
-package br.com.br.startSpring.service;
+package br.com.br.startSpring.controller;
 
 import br.com.br.startSpring.dto.ProdutoDto;
 import br.com.br.startSpring.exception.GenericException;
@@ -13,16 +13,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class ProdutoServiceTest {
+public class ProdutoControllerTest {
 
     @Autowired
-    private ProdutoService produtoService;
+    private ProdutoController produtoController;
 
     @Test
     void criarProduto() {
         ProdutoDto produtoNovo = instanciarProduto();
-        Long idSalvo = produtoService.save(produtoNovo);
-        ProdutoDto recuperado = produtoService.findById(idSalvo);
+        Long idSalvo = produtoController.save(produtoNovo);
+        ProdutoDto recuperado = produtoController.findById(idSalvo);
         assertEquals(produtoNovo.getSku(), recuperado.getSku());
         assertEquals(produtoNovo.getDescricao(), recuperado.getDescricao());
         assertEquals(produtoNovo.getUnidade(), recuperado.getUnidade());
@@ -32,8 +32,8 @@ class ProdutoServiceTest {
     @Test
     void recuperarProduto() {
         ProdutoDto produtoNovo = instanciarProduto();
-        Long idSalvo = produtoService.save(produtoNovo);
-        ProdutoDto recuperado = produtoService.findById(idSalvo);
+        Long idSalvo = produtoController.save(produtoNovo);
+        ProdutoDto recuperado = produtoController.findById(idSalvo);
 
         assertEquals(recuperado.getSku(), "1");
         assertEquals(recuperado.getDescricao(), "Primeiro produto");
@@ -44,7 +44,7 @@ class ProdutoServiceTest {
     @Test
     void lancarExceptionAoRecuperarIdInexistente() {
         try {
-            produtoService.findById(99L);
+            produtoController.findById(99L);
         } catch (Exception e) {
             assertTrue(e instanceof GenericException);
             assertEquals(e.getMessage(), "Produto não encontrado.");
@@ -54,19 +54,19 @@ class ProdutoServiceTest {
     @Test
     void alterarProduto() {
         ProdutoDto produtoNovo = instanciarProduto();
-        Long idSalvo = produtoService.save(produtoNovo);
+        Long idSalvo = produtoController.save(produtoNovo);
 
-        ProdutoDto recuperado = produtoService.findById(idSalvo);
+        ProdutoDto recuperado = produtoController.findById(idSalvo);
         recuperado.setDescricao("Descrição modificada");
-        produtoService.save(recuperado);
-        ProdutoDto editadoRecuperado = produtoService.findById(idSalvo);
+        produtoController.save(recuperado);
+        ProdutoDto editadoRecuperado = produtoController.findById(idSalvo);
         assertEquals(editadoRecuperado.getDescricao(), "Descrição modificada");
     }
 
     @Test
     void lancarExceptionAoCriarProdutoNulo() {
         try {
-            produtoService.save(null);
+            produtoController.save(null);
         } catch (Exception e) {
             assertTrue(e instanceof GenericException);
             assertEquals(e.getMessage(), "Erro ao salvar produto.");
@@ -76,16 +76,16 @@ class ProdutoServiceTest {
     @Test
     void removerProduto() {
         ProdutoDto produtoNovo = instanciarProduto();
-        Long idSalvo = produtoService.save(produtoNovo);
+        Long idSalvo = produtoController.save(produtoNovo);
 
-        ProdutoDto recuperadoAntesDeletar = produtoService.findById(idSalvo);
+        ProdutoDto recuperadoAntesDeletar = produtoController.findById(idSalvo);
         assertNotNull(recuperadoAntesDeletar);
 
-        produtoService.deleteById(idSalvo);
+        produtoController.delete(idSalvo);
 
         ProdutoDto tentativaRecuperar = null;
         try {
-            tentativaRecuperar = produtoService.findById(idSalvo);
+            tentativaRecuperar = produtoController.findById(idSalvo);
         } catch (Exception e) {
             assertTrue(e instanceof GenericException);
             assertEquals(e.getMessage(), "Produto não encontrado.");
@@ -96,7 +96,7 @@ class ProdutoServiceTest {
     @Test
     void lancarExceptionAoRemoverProdutoInexistente() {
         try {
-            produtoService.deleteById(99L);
+            produtoController.delete(99L);
         } catch (Exception e) {
             assertTrue(e instanceof GenericException);
             assertEquals(e.getMessage(), "Produto não encontrado.");

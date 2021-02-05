@@ -17,7 +17,7 @@ public class ProdutoController {
     @PostMapping("/produto")
     @ResponseBody
     public Long save(@RequestBody ProdutoDto dto) {
-        return service.salvar(dto);
+        return service.save(dto);
     }
 
     @GetMapping("/produto")
@@ -35,6 +35,6 @@ public class ProdutoController {
     @DeleteMapping("/produto/{id}")
     @ResponseBody
     public void delete(@PathVariable Long id) {
-        service.removerById(id);
+        service.deleteById(id);
     }
 }

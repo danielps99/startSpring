@@ -32,7 +32,7 @@ public class ProdutoService {
                 .map(book -> mapper.map(book, ProdutoDto.class)).collect(Collectors.toList());
     }
 
-    public Long salvar(ProdutoDto dto) {
+    public Long save(ProdutoDto dto) {
         try {
             Produto produto = mapper.map(dto, Produto.class);
             Produto salvo = jpaRepository.save(produto);
@@ -43,7 +43,7 @@ public class ProdutoService {
         }
     }
 
-    public void removerById(Long id) {
+    public void deleteById(Long id) {
         try {
             jpaRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
