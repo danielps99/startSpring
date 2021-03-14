@@ -52,6 +52,17 @@ mvn spring-boot:run test
 
 O projeto utiliza banco de dados H2 Database Engine
 
+#### Acesso ao sistema
+
+Autenticar usuário em
+http://localhost:8080/login
+conteúdo body para logar
+
+- usuário admin: {"username":"admin", "password":"admin"}
+- usuário editor: {"username":"editor", "password":"editor"}
+
+Após logar, é necessário utilizar o header Authorization para as próximas requisições
+
 ##### Detalhes conexão
 
 **Url :** http://localhost:8080/h2-console
