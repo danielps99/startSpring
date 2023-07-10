@@ -61,7 +61,20 @@ conteúdo body para logar
 - usuário admin: {"username":"admin", "password":"admin"}
 - usuário editor: {"username":"editor", "password":"editor"}
 
-Após logar, é necessário utilizar o header Authorization para as próximas requisições
+Após logar, pegar a chave Authorization no header e setar o token no header Authorization para as próximas requisições.
+
+#### Requisição para criar um produto
+Para criar um produto deve ser admin. Enviar post para
+http://localhost:8080/api/produto
+Exemplo de objeto:
+```
+{
+    "sku": "123456789",
+    "descricao": "Algum produto",
+    "unidadeMedida": "KG",
+    "unidade": 15.12
+}
+``` 
 
 ##### Detalhes conexão
 
