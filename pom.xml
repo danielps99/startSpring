@@ -10,9 +10,9 @@
     </parent>
     <groupId>br.com.br</groupId>
     <artifactId>startSpring</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>startSpring</name>
-    <description>Projeto spring sem nenhuma dependecia. Tenho a intenção de adicionar dependencias aos poucos
+    <description>Project Spring without dependency. I am intended to add dependencies gradually.
     </description>
 
     <properties>

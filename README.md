@@ -4,7 +4,7 @@ Projeto spring sem dependências inicialmente. Prentendo adicionar dependência 
 
 ## Histórico dos principais commits
 
-Veja nesse [link](./README_historicoCommits.md) o histórico da evolução de cada commit.
+Veja nesse [link](./README_historyCommits.md) o histórico da evolução de cada commit.
 
 ## Ambiente e ferramentas
 
@@ -63,14 +63,14 @@ conteúdo body para logar
 
 Após logar, pegar a chave Authorization no header e setar o token no header Authorization para as próximas requisições.
 
-#### Requisição para criar um produto
-Para criar um produto deve ser admin. Enviar post para
-http://localhost:8080/api/produto
+#### Requisição para criar um product
+Para criar um product deve ser admin. Enviar post para
+http://localhost:8080/api/product
 Exemplo de objeto:
 ```
 {
     "sku": "123456789",
-    "descricao": "Algum produto",
+    "descricao": "Algum product",
     "unidadeMedida": "KG",
     "unidade": 15.12
 }
@@ -82,6 +82,6 @@ Exemplo de objeto:
 
 **JDBC Url :** jdbc:h2:mem:banco
 
-**User Name :** desenvolvimento
+**User Name :** developer
 
-**Password :** acessolivre
+**Password :** freeaccess

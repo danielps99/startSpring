@@ -23,16 +23,16 @@ databaseChangeLog:
                   constraints:
                     nullable: false
   - changeSet:
-      id: createTableProduto
+      id: createTableProduct
       author: Daniel
       preConditions:
         - onFail: MARK_RAN
           not:
             tableExists:
-              tableName: produto
+              tableName: product
       changes:
         - createTable:
-            tableName: produto
+            tableName: product
             columns:
               - column:
                   name: id
@@ -41,36 +41,36 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
-                    primaryKeyName: produto_pk
+                    primaryKeyName: product_pk
               - column:
                   name: sku
                   type: VARCHAR(15)
                   constraints:
                     nullable: false
               - column:
-                  name: descricao
+                  name: description
                   type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:
-                  name: unidade
+                  name: unitprice
                   type: NUMBER(6,2)
               - column:
-                  name: unidademedida
+                  name: measurementunit
                   type: VARCHAR(15)
                   constraints:
                     nullable: false
   - changeSet:
-      id: createTableProdutoAud
+      id: createTableProductAud
       author: Daniel
       preConditions:
         - onFail: MARK_RAN
           not:
             tableExists:
-              tableName: produto_aud
+              tableName: product_aud
       changes:
         - createTable:
-            tableName: produto_aud
+            tableName: product_aud
             columns:
               - column:
                   name: id
@@ -90,20 +90,20 @@ databaseChangeLog:
                   name: sku
                   type: VARCHAR(15)
               - column:
-                  name: descricao
+                  name: description
                   type: VARCHAR(255)
               - column:
-                  name: unidade
+                  name: unitprice
                   type: NUMBER(6,2)
               - column:
-                  name: unidademedida
+                  name: measurementunit
                   type: VARCHAR(15)
   - changeSet:
-      id: createPrimaryKeyProdutoAud
+      id: createPrimaryKeyProductAud
       author: Daniel
       changes:
         - addPrimaryKey:
             columnNames: id, rev
-            constraintName: produto_aud_pk
-            tableName: produto_aud
+            constraintName: product_aud_pk
+            tableName: product_aud
             validate: true
