@@ -1,7 +1,9 @@
 package br.com.br.startSpring.config.security;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Objects;
 
 @Service
 public class TokenAuthenticationService {
@@ -42,13 +45,8 @@ public class TokenAuthenticationService {
 
     public Authentication getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(headerString);
-        if (token != null) {
-            String user = Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token.replace(tokenPrefix, ""))
-                    .getBody()
-                    .getSubject();
-
+        if (Objects.nonNull(token) && !token.isEmpty()) {
+            String user = getUserFromToken(token);
             if (user != null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(user);
                 Collection<? extends GrantedAuthority> authorities =
@@ -57,5 +55,17 @@ public class TokenAuthenticationService {
             }
         }
         return null;
+    }
+
+    private String getUserFromToken(String token) {
+        try {
+            return Jwts.parser()
+                    .setSigningKey(secret)
+                    .parseClaimsJws(token.replace(tokenPrefix, ""))
+                    .getBody()
+                    .getSubject();
+        } catch (JwtException e) {
+            return null;
+        }
     }
 }
