@@ -4,6 +4,7 @@ services:
     build:
       context: ./
       dockerfile: ./Dockerfile
+    container_name: start-spring
     image: bdws/start-spring-api
     ports:
       - "8080:8080"
