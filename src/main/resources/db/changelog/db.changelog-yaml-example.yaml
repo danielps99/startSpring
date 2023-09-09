@@ -17,6 +17,7 @@ databaseChangeLog:
                   autoIncrement: true
                   constraints:
                     nullable: false
+                    primaryKey: true
               - column:
                   name: revtstmp
                   type: BIGINT
