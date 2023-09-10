@@ -1,86 +1,110 @@
 # startSpring
+Project for study using the Spring Framework without dependency initially. I intend to add dependency as needed. 
 
-Projeto spring sem dependências inicialmente. Prentendo adicionar dependência conforme a necessidade
+## Project progress
+- Historic of first main commits
+  - See on [link](./README_historyCommits.md) the oldest commits.
+- Newest commits
+  - For recent commits, I have been using semantic commit.
 
-## Histórico dos principais commits
+## General Requirements
+Install Maven and see Maven version.
+```
+sudo apt install maven
+mvn --version
+```
 
-Veja nesse [link](./README_historyCommits.md) o histórico da evolução de cada commit.
+## How to run with Docker Compose
+Install docker compose and add user to docker group.
+```
+sudo apt install docker-compose
+sudo usermod -aG docker $USER
+```
 
-## Ambiente e ferramentas
+### Steps to run the project.
+The docker compose configuration includes.
+- java 11 container
+- Mysql 8 container
 
-Desenvolvimento utilizando o Ubuntu 20.04.1 LTS e Intelij 2020.2.4 Community Edition
+Inside the project root folder, run command below to download and install dependencies.
+```
+mvn install
+``` 
+Inside the project root folder, run command below to create, start docker containers and run the project.
+```
+    docker-compose up --build --force-recreate
+```
 
-#### Requisitos e passos para instalar
-
-Para gerenciar a versão do java utilizei o sdkman https://sdkman.io. Passos para instalar o Sdkman e o Java 11.
-
+## How to run with local Java
+In order manage the Java version use the sdkman https://sdkman.io. Install the Sdkman and the Java 11.
 ```
 curl -s "https://get.sdkman.io" | bash
 source "$HOME/.sdkman/bin/sdkman-init.sh"
 sdk version
 sdk install java 11.0.9-zulu
 ``` 
-
-Instalar maven
-
-```
-sudo apt install maven
-mvn --version
-``` 
-
-#### Passos para executar o projeto
-
-Instalar dependências: Na pasta do projeto execute o comando para baixar as dependências do projeto
-
+### Steps to run the project.
+Inside the project root folder, run command below to download and install dependencies.
 ```
 mvn install
 ``` 
-
-Executar o projeto: Na pasta do projeto execute o comando subir o projeto
-
+Inside the project root folder, run command below to run the project.
 ```
 mvn spring-boot:run
 ``` 
 
-Executar os testes do projeto: Na pasta do projeto execute o comando executar os testes do projeto
-
+## How to run only unit tests
+Inside the project root folder, run command below to run the unit tests of the project.
 ```
 mvn spring-boot:run test
 ``` 
 
-#### Acesso ao banco de dados
+## How to use the system
+The project contains only backend, so you need any tools like postman or similar to request the system.
+### How to log in the system
+Autenticate user in
 
-O projeto utiliza banco de dados H2 Database Engine
-
-#### Acesso ao sistema
-
-Autenticar usuário em
 http://localhost:8080/login
-conteúdo body para logar
 
-- usuário admin: {"username":"admin", "password":"admin"}
-- usuário editor: {"username":"editor", "password":"editor"}
+body content to log in.
+- User admin: {"username":"admin", "password":"admin"}
+- User editor: {"username":"editor", "password":"editor"}
 
-Após logar, pegar a chave Authorization no header e setar o token no header Authorization para as próximas requisições.
+After log in, copy the Authorization key inside header and past it inside header Authorization to use on next requests. 
 
-#### Requisição para criar um product
-Para criar um product deve ser admin. Enviar post para
+### Request to create a product
+To create a product you must be logged as admin. Send post to:
+
 http://localhost:8080/api/product
-Exemplo de objeto:
+
+Object example:
 ```
 {
     "sku": "123456789",
-    "descricao": "Algum product",
-    "unidadeMedida": "KG",
-    "unidade": 15.12
+    "description": "First product",
+    "measurementUnit": "KG",
+    "unitPrice": 15.12
 }
 ``` 
 
-##### Detalhes conexão
+## How to access database
+### Connection details when run with local Java
+In this case the project use H2 Database Engine
 
 **Url :** http://localhost:8080/h2-console
 
 **JDBC Url :** jdbc:h2:mem:banco
+
+**User Name :** developer
+
+**Password :** freeaccess
+
+### Connection details when run with Docker Compose
+In this case the project use Mysql database inside Docker container
+
+**Hostname :** localhost
+
+**Port :** 3306
 
 **User Name :** developer
 
