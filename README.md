@@ -15,10 +15,11 @@ mvn --version
 ```
 
 ## How to run with Docker Compose
-Install docker compose and add user to docker group.
+Install docker compose, add user to docker group and activate the changes to groups.
 ```
 sudo apt install docker-compose
 sudo usermod -aG docker $USER
+newgrp docker
 ```
 
 ### Steps to run the project.
