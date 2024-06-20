@@ -4,9 +4,9 @@ import br.com.bdws.start_spring.dto.ProductDto;
 import br.com.bdws.start_spring.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,14 +14,13 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api")
 @Tag(name = "Products", description = "Controller used to save, list, get and delete product.")
+@RequiredArgsConstructor
 public class ProductController {
 
-    @Autowired
-    private ProductService service;
+    private final ProductService service;
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     @PostMapping("/product")
-    @ResponseBody
     @Operation(
             summary =  "Create or update a product.",
             description = "Create or update a product. To create, remove id field.")
@@ -30,7 +29,6 @@ public class ProductController {
     }
 
     @GetMapping("/product")
-    @ResponseBody
     @Operation(
             summary =  "Fetch all products in the database.",
             description = "Fetch all products in the database. No filter parameter is allowed.")
@@ -42,7 +40,6 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}")
-    @ResponseBody
     @Operation(
             summary =  "Fetch a specific product by id.",
             description = "Fetch a specific product by id. If not found, will response status 500")
@@ -51,7 +48,6 @@ public class ProductController {
     }
 
     @DeleteMapping("/product/{id}")
-    @ResponseBody
     @Operation(
             summary =  "Delete a specific product by id.",
             description = "Delete a specific product by id. If not found, will response status 500")

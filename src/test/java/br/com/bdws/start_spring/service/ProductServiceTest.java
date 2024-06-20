@@ -44,10 +44,10 @@ class ProductServiceTest {
         Long savedId = productService.save(newProduct);
         ProductDto recovered = productService.findById(savedId);
 
-        assertEquals(recovered.getSku(), "1");
-        assertEquals(recovered.getDescription(), "First product");
-        assertEquals(recovered.getMeasurementUnit(), "METER");
-        assertEquals(recovered.getUnitPrice(), BigDecimal.valueOf(10.12));
+        assertEquals("1", recovered.getSku());
+        assertEquals("First product", recovered.getDescription());
+        assertEquals("METER", recovered.getMeasurementUnit());
+        assertEquals(BigDecimal.valueOf(10.12), recovered.getUnitPrice());
     }
 
     @Test
@@ -56,7 +56,7 @@ class ProductServiceTest {
             productService.findById(99L);
         } catch (Exception e) {
             assertTrue(e instanceof GenericException);
-            assertEquals(e.getMessage(), "Product not found.");
+            assertEquals("Product not found.", e.getMessage());
         }
     }
 
@@ -69,7 +69,7 @@ class ProductServiceTest {
         recovered.setDescription("Modified description");
         productService.save(recovered);
         ProductDto recoveredEdited = productService.findById(savedId);
-        assertEquals(recoveredEdited.getDescription(), "Modified description");
+        assertEquals("Modified description", recoveredEdited.getDescription());
     }
 
     @Test
@@ -78,7 +78,7 @@ class ProductServiceTest {
             productService.save(null);
         } catch (Exception e) {
             assertTrue(e instanceof GenericException);
-            assertEquals(e.getMessage(), "Error saving product.");
+            assertEquals("Error saving product.", e.getMessage());
         }
     }
 
@@ -97,7 +97,7 @@ class ProductServiceTest {
             attemptRecover = productService.findById(savedId);
         } catch (Exception e) {
             assertTrue(e instanceof GenericException);
-            assertEquals(e.getMessage(), "Product not found.");
+            assertEquals("Product not found.", e.getMessage());
         }
         assertNull(attemptRecover);
     }
@@ -108,7 +108,7 @@ class ProductServiceTest {
             productService.deleteById(99L);
         } catch (Exception e) {
             assertTrue(e instanceof GenericException);
-            assertEquals(e.getMessage(), "Product not found.");
+            assertEquals("Product not found.", e.getMessage());
         }
     }
 }

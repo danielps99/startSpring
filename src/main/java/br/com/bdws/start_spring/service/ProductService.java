@@ -1,11 +1,11 @@
 package br.com.bdws.start_spring.service;
 
+import br.com.bdws.start_spring.dto.ProductDto;
 import br.com.bdws.start_spring.entity.Product;
 import br.com.bdws.start_spring.exception.GenericException;
-import br.com.bdws.start_spring.dto.ProductDto;
 import br.com.bdws.start_spring.repository.IProductJpaRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +13,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
-    @Autowired
-    private IProductJpaRepository jpaRepository;
-    @Autowired
-    private ModelMapper mapper;
+    private final IProductJpaRepository jpaRepository;
+    private final ModelMapper mapper;
 
     public ProductDto findById(Long id) {
         Product product = jpaRepository.findById(id).orElseThrow(

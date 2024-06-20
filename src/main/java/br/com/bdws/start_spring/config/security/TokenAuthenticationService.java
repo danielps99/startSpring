@@ -20,30 +20,26 @@ import java.util.Objects;
 @Service
 public class TokenAuthenticationService {
 
-    private final long expirationTime = 3600000; // 1 hora
-    private final String secret = "MySecretKey";
-    private final String tokenPrefix = "Bearer";
-    private final String headerString = "Authorization";
+    private static final long EXPIRATION_TIME = 3600000; // 1 hora
+    private static final String SECRET = "MySecretKey";
+    private static final String TOKEN_PREFIX = "Bearer";
+    private static final String HEADER_STRING = "Authorization";
 
     @Autowired
     private UserDetailsService userDetailsService;
 
-    public UserDetailsService getUserDetailsService() {
-        return userDetailsService;
-    }
-
     public void addAuthentication(HttpServletResponse response, String username) {
-        String JWT = Jwts.builder()
+        String jwt = Jwts.builder()
                 .setSubject(username)
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();
 
-        response.addHeader(headerString, tokenPrefix + " " + JWT);
+        response.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + jwt);
     }
 
     public Authentication getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader(headerString);
+        String token = request.getHeader(HEADER_STRING);
         if (Objects.nonNull(token) && !token.isEmpty()) {
             String user = getUserFromToken(token);
             if (user != null) {
@@ -59,8 +55,8 @@ public class TokenAuthenticationService {
     private String getUserFromToken(String token) {
         try {
             return Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token.replace(tokenPrefix, ""))
+                    .setSigningKey(SECRET)
+                    .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
                     .getBody()
                     .getSubject();
         } catch (JwtException e) {

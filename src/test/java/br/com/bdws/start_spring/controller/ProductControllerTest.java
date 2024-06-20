@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class ProductControllerTest {
+class ProductControllerTest {
 
     @Autowired
     private ProductController productController;
@@ -44,10 +44,10 @@ public class ProductControllerTest {
         Long savedId = productController.save(newProduct);
         ProductDto recovered = productController.findById(savedId);
 
-        assertEquals(recovered.getSku(), "1");
-        assertEquals(recovered.getDescription(), "First product");
-        assertEquals(recovered.getMeasurementUnit(), "METER");
-        assertEquals(recovered.getUnitPrice(), BigDecimal.valueOf(10.12));
+        assertEquals("1", recovered.getSku());
+        assertEquals("First product", recovered.getDescription());
+        assertEquals("METER", recovered.getMeasurementUnit());
+        assertEquals(BigDecimal.valueOf(10.12), recovered.getUnitPrice());
     }
 
     @Test
@@ -56,7 +56,7 @@ public class ProductControllerTest {
             productController.findById(99L);
         } catch (Exception e) {
             assertTrue(e instanceof GenericException);
-            assertEquals(e.getMessage(), "Product not found.");
+            assertEquals("Product not found.", e.getMessage());
         }
     }
 
@@ -69,7 +69,7 @@ public class ProductControllerTest {
         recovered.setDescription("Modified description");
         productController.save(recovered);
         ProductDto recoveredEdited = productController.findById(savedId);
-        assertEquals(recoveredEdited.getDescription(), "Modified description");
+        assertEquals("Modified description", recoveredEdited.getDescription());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class ProductControllerTest {
             productController.save(null);
         } catch (Exception e) {
             assertTrue(e instanceof GenericException);
-            assertEquals(e.getMessage(), "Error saving product.");
+            assertEquals("Error saving product.", e.getMessage());
         }
     }
 
@@ -97,7 +97,7 @@ public class ProductControllerTest {
             attemptRecover = productController.findById(savedId);
         } catch (Exception e) {
             assertTrue(e instanceof GenericException);
-            assertEquals(e.getMessage(), "Product not found.");
+            assertEquals("Product not found.", e.getMessage());
         }
         assertNull(attemptRecover);
     }
@@ -108,7 +108,7 @@ public class ProductControllerTest {
             productController.delete(99L);
         } catch (Exception e) {
             assertTrue(e instanceof GenericException);
-            assertEquals(e.getMessage(), "Product not found.");
+            assertEquals("Product not found.", e.getMessage());
         }
     }
 }
