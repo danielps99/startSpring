@@ -24,7 +24,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.headers().frameOptions().disable();
         httpSecurity.csrf().disable().authorizeRequests()
-                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers(
+                        "/h2-console/**",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/produto").hasAuthority(EDITOR.name())
                 .antMatchers(HttpMethod.GET, "/api/produto/{id}").hasAuthority(EDITOR.name())
