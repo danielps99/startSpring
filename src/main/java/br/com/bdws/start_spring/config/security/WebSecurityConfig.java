@@ -1,5 +1,6 @@
 package br.com.bdws.start_spring.config.security;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -15,11 +17,14 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -79,7 +84,7 @@ public class WebSecurityConfig {
 
         httpSecurity
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers( "/login","/api/produto", "/api/produto/{id}").permitAll())
+                        .requestMatchers( "/login","/api/produto", "/api/produto/{id}", "/error").permitAll())
 //                        .requestMatchers(HttpMethod.GET, "/api/produto", "/api/produto/{id}")
 //                        .hasAuthority(ADMIN.name()))
                 .csrf(AbstractHttpConfigurer::disable)
@@ -87,9 +92,13 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 //                .sessionManagement()
                 .addFilterBefore(new JWTLoginFilter("/login", authenticationManager, tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class)
-        .addFilterAfter(new JWTAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(new JWTAuthenticationFilter(tokenAuthenticationService),  UsernamePasswordAuthenticationFilter.class)
+                .removeConfigurer(AuthorizeHttpRequestsConfigurer.class);//AuthenticationFilter.class
 
         return httpSecurity.build();
+    }
+
+    private void removeConfigurer(Class<AuthorizeHttpRequestsConfigurer> clazz) {
     }
 
     public AuthenticationManager authenticationManager(
@@ -102,6 +111,7 @@ public class WebSecurityConfig {
         return new ProviderManager(authenticationProvider);
     }
 
+//
 //    @Bean
 //    public SavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler() {
 //        return new CustomAuthenticationSuccessHandler();

@@ -4,8 +4,10 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -38,7 +40,7 @@ public class TokenAuthenticationService {
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + jwt);
     }
 
-    public Authentication getAuthentication(HttpServletRequest request) {
+    public Authentication getAuthentication(HttpServletRequest request) throws AuthenticationException {
         String token = request.getHeader(HEADER_STRING);
         if (Objects.nonNull(token) && !token.isEmpty()) {
             String user = getUserFromToken(token);
@@ -48,6 +50,8 @@ public class TokenAuthenticationService {
                         userDetails.getAuthorities();
                 return new UsernamePasswordAuthenticationToken(user, null, authorities);
             }
+        } else {
+            throw new BadCredentialsException("Failed to load authentication token");
         }
         return null;
     }
