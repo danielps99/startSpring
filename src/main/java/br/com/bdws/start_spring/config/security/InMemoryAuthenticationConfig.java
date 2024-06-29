@@ -1,9 +1,12 @@
 package br.com.bdws.start_spring.config.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 import static br.com.bdws.start_spring.config.security.Authorities.ADMIN;
 import static br.com.bdws.start_spring.config.security.Authorities.EDITOR;
@@ -11,15 +14,23 @@ import static br.com.bdws.start_spring.config.security.Authorities.EDITOR;
 @Configuration
 public class InMemoryAuthenticationConfig {
 
-    @Autowired
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder
-                .inMemoryAuthentication()
-                .passwordEncoder(new BCryptPasswordEncoder())
-                //SENHA admin
-                .withUser("admin").password("$2a$10$UqIm1dQEIyNNdbg37y280uTueU6X7H8vaQVXlA5ucJ7Cx1d9EdNuK").authorities(ADMIN.name(), EDITOR.name())
-                .and()
-                //SENHA editor
-                .withUser("editor").password("$2a$10$EpUrB/tkR7V6U07NsZdSp.o841A7ZcSHv3VECVEYhZvfCpBLDBCBa").authorities(EDITOR.name());
+    private PasswordEncoder passwordEncoder =  new BCryptPasswordEncoder();
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        InMemoryUserDetailsManager inMemoryUserDetailsManager = new InMemoryUserDetailsManager();
+
+        User.UserBuilder userBuilder = User.builder().passwordEncoder(passwordEncoder::encode);
+        inMemoryUserDetailsManager.createUser(userBuilder
+                .username("editor")
+                .password("editor")
+                .roles(EDITOR.name())
+                .build());
+        inMemoryUserDetailsManager.createUser(userBuilder
+                .username("admin")
+                .password("admin")
+                .roles(ADMIN.name(), EDITOR.name())
+                .build());
+        return inMemoryUserDetailsManager;
     }
 }
