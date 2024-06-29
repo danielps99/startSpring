@@ -3,6 +3,7 @@ package br.com.bdws.start_spring.config.security;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,15 +16,17 @@ import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Objects;
+
+import javax.crypto.SecretKey;
+import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class TokenAuthenticationService {
 
-    private static final long EXPIRATION_TIME = 3600000; // 1 hora
-    private static final String SECRET = "MySecretKey";
+    private static final long EXPIRATION_TIME = TimeUnit.HOURS.toMillis(1);
+    private static final String SECRET = "638CBE3A90E0303BF3808F40F95A7F02A24B4B5D029C954CF553F79E9EF1DC0384BE681C249F1223F6B55AA21DC070914834CA22C8DD98E14A872CA010091ACC";
     private static final String TOKEN_PREFIX = "Bearer";
     private static final String HEADER_STRING = "Authorization";
 
@@ -31,13 +34,22 @@ public class TokenAuthenticationService {
     private UserDetailsService userDetailsService;
 
     public void addAuthentication(HttpServletResponse response, String username) {
+        Map<String, String> claims = new HashMap<>();
+        claims.put("iss", "https://secure.genuinecoder.com");
         String jwt = Jwts.builder()
-                .setSubject(username)
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .claims(claims)
+                .subject(username)
+                .issuedAt(Date.from(Instant.now()))
+                .expiration(Date.from(Instant.now().plusMillis(EXPIRATION_TIME)))
+                .signWith(generateKey())
                 .compact();
 
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + jwt);
+    }
+
+    private SecretKey generateKey() {
+        byte[] decodedKey = Base64.getDecoder().decode(SECRET);
+        return Keys.hmacShaKeyFor(decodedKey);
     }
 
     public Authentication getAuthentication(HttpServletRequest request) throws AuthenticationException {
@@ -59,9 +71,10 @@ public class TokenAuthenticationService {
     private String getUserFromToken(String token) {
         try {
             return Jwts.parser()
-                    .setSigningKey(SECRET)
-                    .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
-                    .getBody()
+                    .verifyWith(generateKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
                     .getSubject();
         } catch (JwtException e) {
             return null;
