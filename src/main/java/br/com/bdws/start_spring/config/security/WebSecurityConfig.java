@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.HeaderWriterFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -70,15 +71,15 @@ public class WebSecurityConfig {
 
         httpSecurity
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers( "/login","/api/produto", "/api/produto/{id}", "/error").permitAll())
+                        .requestMatchers( "/login", "/error").permitAll())
 //                        .requestMatchers(HttpMethod.GET, "/api/produto", "/api/produto/{id}")
 //                        .hasAuthority(ADMIN.name()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 //                .sessionManagement()
-                .addFilterBefore(new JWTLoginFilter("/login", authenticationManager, tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(new JWTAuthenticationFilter(tokenAuthenticationService),  UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTLoginFilter("/login", authenticationManager, tokenAuthenticationService), HeaderWriterFilter.class)
+        .addFilterBefore(new JWTAuthenticationFilter(tokenAuthenticationService),  HeaderWriterFilter.class)
                 .removeConfigurer(AuthorizeHttpRequestsConfigurer.class);//AuthenticationFilter.class
 
         return httpSecurity.build();

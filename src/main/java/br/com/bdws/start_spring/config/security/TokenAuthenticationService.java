@@ -2,9 +2,10 @@ package br.com.bdws.start_spring.config.security;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,15 +15,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@RequiredArgsConstructor
 public class TokenAuthenticationService {
 
     private static final long EXPIRATION_TIME = TimeUnit.HOURS.toMillis(1);
@@ -30,12 +29,11 @@ public class TokenAuthenticationService {
     private static final String TOKEN_PREFIX = "Bearer";
     private static final String HEADER_STRING = "Authorization";
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     public void addAuthentication(HttpServletResponse response, String username) {
         Map<String, String> claims = new HashMap<>();
-        claims.put("iss", "https://secure.genuinecoder.com");
+        claims.put("sit", "https://secure.bdws.com.br");
         String jwt = Jwts.builder()
                 .claims(claims)
                 .subject(username)
@@ -54,18 +52,15 @@ public class TokenAuthenticationService {
 
     public Authentication getAuthentication(HttpServletRequest request) throws AuthenticationException {
         String token = request.getHeader(HEADER_STRING);
-        if (Objects.nonNull(token) && !token.isEmpty()) {
-            String user = getUserFromToken(token);
-            if (user != null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(user);
-                Collection<? extends GrantedAuthority> authorities =
-                        userDetails.getAuthorities();
-                return new UsernamePasswordAuthenticationToken(user, null, authorities);
-            }
+        String user = getUserFromToken(token);
+        if (Objects.nonNull(user)) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(user);
+            Collection<? extends GrantedAuthority> authorities =
+                    userDetails.getAuthorities();
+            return new UsernamePasswordAuthenticationToken(user, null, authorities);
         } else {
             throw new BadCredentialsException("Failed to load authentication token");
         }
-        return null;
     }
 
     private String getUserFromToken(String token) {
@@ -73,10 +68,10 @@ public class TokenAuthenticationService {
             return Jwts.parser()
                     .verifyWith(generateKey())
                     .build()
-                    .parseSignedClaims(token)
+                    .parseSignedClaims(token.substring(7))
                     .getPayload()
                     .getSubject();
-        } catch (JwtException e) {
+        } catch (JwtException | NullPointerException | StringIndexOutOfBoundsException e) {
             return null;
         }
     }
