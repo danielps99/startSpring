@@ -79,13 +79,9 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 //                .sessionManagement()
                 .addFilterBefore(new JWTLoginFilter("/login", authenticationManager, tokenAuthenticationService), HeaderWriterFilter.class)
-        .addFilterBefore(new JWTAuthenticationFilter(tokenAuthenticationService),  HeaderWriterFilter.class)
-                .removeConfigurer(AuthorizeHttpRequestsConfigurer.class);//AuthenticationFilter.class
+        .addFilterBefore(new JWTAuthenticationFilter(tokenAuthenticationService),  HeaderWriterFilter.class);
 
         return httpSecurity.build();
-    }
-
-    private void removeConfigurer(Class<AuthorizeHttpRequestsConfigurer> clazz) {
     }
 
     public AuthenticationManager authenticationManager(
