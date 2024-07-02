@@ -35,7 +35,7 @@
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <logger name="arquivo" level="TRACE" additivity="false">
+    <logger name="arquivo" level="DEBUG" additivity="false">
         <appender-ref ref="FILEOPERATOR"/>
     </logger>
 
