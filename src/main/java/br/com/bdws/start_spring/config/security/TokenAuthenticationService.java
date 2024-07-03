@@ -50,29 +50,25 @@ public class TokenAuthenticationService {
         return Keys.hmacShaKeyFor(decodedKey);
     }
 
-    public Authentication getAuthentication(HttpServletRequest request) throws AuthenticationException {
+    public Authentication getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
-        String user = getUserFromToken(token);
-        if (Objects.nonNull(user)) {
+        try {
+            String user = getUserFromToken(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(user);
             Collection<? extends GrantedAuthority> authorities =
                     userDetails.getAuthorities();
             return new UsernamePasswordAuthenticationToken(user, null, authorities);
-        } else {
-            throw new BadCredentialsException("Failed to load authentication token");
+        } catch (JwtException | NullPointerException | StringIndexOutOfBoundsException e) {
+            return null;
         }
     }
 
     private String getUserFromToken(String token) {
-        try {
-            return Jwts.parser()
-                    .verifyWith(generateKey())
-                    .build()
-                    .parseSignedClaims(token.substring(7))
-                    .getPayload()
-                    .getSubject();
-        } catch (JwtException | NullPointerException | StringIndexOutOfBoundsException e) {
-            return null;
-        }
+        return Jwts.parser()
+                .verifyWith(generateKey())
+                .build()
+                .parseSignedClaims(token.substring(7))
+                .getPayload()
+                .getSubject();
     }
 }
