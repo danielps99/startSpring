@@ -1,0 +1,23 @@
+FROM maven:3.9.8-amazoncorretto-17-al2023 as builder
+WORKDIR /opt/buildApp
+COPY . .
+RUN mvn clean install
+
+FROM openjdk:17
+
+ARG PROFILE
+ARG ADDITIONAL_OPTS
+
+ENV PROFILE=${PROFILE}
+ENV ADDITIONAL_OPTS=${ADDITIONAL_OPTS}
+
+WORKDIR /opt/deployjava
+
+COPY --from=builder /opt/buildApp/target/startSpring-*.jar app.jar
+
+SHELL ["/bin/sh", "-c"]
+
+EXPOSE 8080
+EXPOSE 5005
+
+CMD java ${ADDITIONAL_OPTS} -jar app.jar --spring.profiles.active=${PROFILE}

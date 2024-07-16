@@ -24,13 +24,11 @@ newgrp docker
 
 ### Steps to run the project.
 The docker compose configuration includes.
-- java 11 container
+- java 17 container
 - Mysql 8 container
 
-Inside the project root folder, run command below to download and install dependencies.
-```
-mvn install
-``` 
+Dockerfile is configured to run 'mvn clean install' command in order to install dependencies during build image.
+ 
 Inside the project root folder, run command below to create, start docker containers and run the project.
 ```
     docker-compose up --build --force-recreate
@@ -42,7 +40,7 @@ In order manage the Java version use the sdkman https://sdkman.io. Install the S
 curl -s "https://get.sdkman.io" | bash
 source "$HOME/.sdkman/bin/sdkman-init.sh"
 sdk version
-sdk install java 11.0.9-zulu
+sdk install java 17.0.11-zulu
 ``` 
 ### Steps to run the project.
 Inside the project root folder, run command below to download and install dependencies.
