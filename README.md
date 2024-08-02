@@ -7,13 +7,6 @@ Project for study using the Spring Framework without dependency initially. I int
 - Newest commits
   - For recent commits, I have been using semantic commit.
 
-## General Requirements
-Install Maven and see Maven version.
-```
-sudo apt install maven
-mvn --version
-```
-
 ## How to run with Docker Compose
 Install docker compose, add user to docker group and activate the changes to groups.
 ```
@@ -24,16 +17,15 @@ newgrp docker
 
 ### Steps to run the project.
 The docker compose configuration includes.
-- java 11 container
+- java 17 container
 - Mysql 8 container
 
-Inside the project root folder, run command below to download and install dependencies.
-```
-mvn install
-``` 
+Dockerfile is configured to run 'mvn clean install' command in order to install dependencies during build image.
+
 Inside the project root folder, run command below to create, start docker containers and run the project.
+
 ```
-    docker-compose up --build --force-recreate
+    docker-compose up start-spring-api -d --build --force-recreate
 ```
 
 ## How to run with local Java
@@ -42,8 +34,15 @@ In order manage the Java version use the sdkman https://sdkman.io. Install the S
 curl -s "https://get.sdkman.io" | bash
 source "$HOME/.sdkman/bin/sdkman-init.sh"
 sdk version
-sdk install java 11.0.9-zulu
-``` 
+sdk install java 17.0.11-zulu
+```
+
+### Local Requirements
+Install Maven and see Maven version.
+```
+sudo apt install maven
+mvn --version
+```
 ### Steps to run the project.
 Inside the project root folder, run command below to download and install dependencies.
 ```
@@ -72,6 +71,11 @@ body content to log in.
 - User editor: {"username":"editor", "password":"editor"}
 
 After log in, copy the Authorization key inside header and past it inside header Authorization to use on next requests. 
+
+### Swagger
+There is no login request in Swagger.
+
+Swagger url: http://localhost:8080/swagger-ui/index.html
 
 ### Request to create a product
 To create a product you must be logged as admin. Send post to:

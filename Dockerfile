@@ -1,3 +1,8 @@
+FROM maven:3-openjdk-17 as builder
+WORKDIR /buildApp
+COPY . .
+RUN --mount=type=cache,target=/root/.m2 --mount=type=cache,target=/opt/buildApp/target mvn install
+
 FROM openjdk:17
 
 ARG PROFILE
@@ -6,9 +11,9 @@ ARG ADDITIONAL_OPTS
 ENV PROFILE=${PROFILE}
 ENV ADDITIONAL_OPTS=${ADDITIONAL_OPTS}
 
-WORKDIR /opt/deployjava
+WORKDIR /deployjava
 
-COPY /target/startSpring-*.jar app.jar
+COPY --from=builder /buildApp/target/startSpring-*.jar app.jar
 
 SHELL ["/bin/sh", "-c"]
 

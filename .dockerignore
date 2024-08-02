@@ -1,0 +1,7 @@
+Dockerfile
+*.md
+*.yaml
+logs
+mvnw
+mvnw.cmd
+target
