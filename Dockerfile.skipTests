@@ -2,7 +2,7 @@ FROM maven:3-openjdk-17 as builder
 WORKDIR /buildApp
 COPY ./pom.xml .
 COPY ./src ./src
-RUN --mount=type=cache,target=/root/.m2 --mount=type=cache,target=/opt/buildApp/target mvn install
+RUN --mount=type=cache,target=/root/.m2 --mount=type=cache,target=/opt/buildApp/target mvn install -DskipTests
 
 FROM openjdk:17
 

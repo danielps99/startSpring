@@ -1,21 +1,21 @@
-version: '3'
 services:
-  bdws_start-spring-api:
+  start-spring-api:
     build:
       context: ./
-      dockerfile: ./Dockerfile
+      dockerfile: ${DOCKERFILE:-Dockerfile}
     container_name: start-spring-api
-    image: bdws/start-spring-api
+    image: bdws/start-spring-api:1.0
     ports:
       - "8080:8080"
       - "5005:5005"
     depends_on:
-      db:
+      start-spring-db:
         condition: service_healthy
     environment:
       - ADDITIONAL_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xmx256m -Xms128m -XX:MaxMetaspaceSize=128m
       - PROFILE=devdocker
-  db:
+
+  start-spring-db:
     container_name: start-spring-db
     image: mysql:8.0
     restart: always

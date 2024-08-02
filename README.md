@@ -1,5 +1,17 @@
 # startSpring
-Project for study using the Spring Framework without dependency initially. I intend to add dependency as needed. 
+Project for study using the Spring Framework without dependency initially. I intend to add dependency as needed.
+
+## Document topics
+- [Run with Docker Compose](#run-with-docker-compose)
+  - [Requirements to compile and run inside docker](#requirements-to-compile-and-run-inside-docker)
+  - [Requirements to compile locally and run inside docker](#requirements-to-compile-locally-and-run-inside-docker)
+  - [Compile and run inside docker](#compile-and-run-inside-docker)
+  - [Compile locally and run inside docker](#compile-locally-and-run-inside-docker)
+- [Run with local Java and no docker](#run-with-local-java-and-no-docker)
+  - [Requirements to compile and run locally](#requirements-to-compile-and-run-locally)
+  - [Compile and run locally](#compile-and-run-locally)
+- [How to use the application](#how-to-use-the-application)
+- [How to access database](#how-to-access-database)
 
 ## Project progress
 - Historic of first main commits
@@ -7,63 +19,60 @@ Project for study using the Spring Framework without dependency initially. I int
 - Newest commits
   - For recent commits, I have been using semantic commit.
 
-## General Requirements
-Install Maven and see Maven version.
-```
-sudo apt install maven
-mvn --version
-```
-
-## How to run with Docker Compose
-Install docker compose, add user to docker group and activate the changes to groups.
-```
-sudo apt install docker-compose
-sudo usermod -aG docker $USER
-newgrp docker
-```
-
-### Steps to run the project.
-The docker compose configuration includes.
-- java 11 container
+## Run with Docker Compose
+### The docker compose configuration includes.
+- java 17 container
 - Mysql 8 container
 
-Inside the project root folder, run command below to download and install dependencies.
+You can compile and run inside docker container, or compile locally and run inside docker container.
+### Requirements to compile and run inside docker
+- Docker Engine: https://docs.docker.com/engine/install/
+- Docker Compose https://docs.docker.com/compose/install/
+
+### Requirements to compile locally and run inside docker
+- The same of requirements to compile and run inside docker, mentioned above.
+- Java 17
+- Maven 3.5 or newer version
+
+
+### Compile and run inside docker
+The command bellow run application with tests. 
 ```
-mvn install
-``` 
-Inside the project root folder, run command below to create, start docker containers and run the project.
+    docker-compose up --build --force-recreate start-spring-api
 ```
-    docker-compose up --build --force-recreate
+The command bellow run application with no tests.
+```
+    DOCKERFILE=./Dockerfile.skipTests docker-compose up --build --force-recreate start-spring-api
+```
+### Compile locally and run inside docker
+The first command bellow compile the project with tests. The second command run application.
+```
+    mvn clean install
+    DOCKERFILE=./Dockerfile.requireLocalMaven docker-compose up --build --force-recreate start-spring-api
 ```
 
-## How to run with local Java
-In order manage the Java version use the sdkman https://sdkman.io. Install the Sdkman and the Java 11.
-```
-curl -s "https://get.sdkman.io" | bash
-source "$HOME/.sdkman/bin/sdkman-init.sh"
-sdk version
-sdk install java 11.0.9-zulu
-``` 
-### Steps to run the project.
-Inside the project root folder, run command below to download and install dependencies.
-```
-mvn install
-``` 
-Inside the project root folder, run command below to run the project.
+## Run with local Java and no docker
+In this case H2 Database will be the database.
+### Requirements to compile and run locally
+- Java 17
+- Maven 3.5 or newer version
+### Compile and run locally
+Run the application.
 ```
 mvn spring-boot:run
 ``` 
-
-## How to run only unit tests
-Inside the project root folder, run command below to run the unit tests of the project.
+Run only the unit tests of the project.
 ```
 mvn spring-boot:run test
 ``` 
 
-## How to use the system
+## How to use the application
 The project contains only backend, so you need any tools like postman or similar to request the system.
-### How to log in the system
-Autenticate user in
+
+If you use Postman, inside the project there is the file StartSpringAPI.postman_collection.json, import it in Postman, it is helpfully.
+
+### How to log in the application
+Authenticate user in
 
 http://localhost:8080/login
 
@@ -73,20 +82,10 @@ body content to log in.
 
 After log in, copy the Authorization key inside header and past it inside header Authorization to use on next requests. 
 
-### Request to create a product
-To create a product you must be logged as admin. Send post to:
+### Swagger
+Swagger documents api and can request api. But there is no login request in Swagger, so you need to authenticate in other tool, like postman for example, in order to get token.
 
-http://localhost:8080/api/product
-
-Object example:
-```
-{
-    "sku": "123456789",
-    "description": "First product",
-    "measurementUnit": "KG",
-    "unitPrice": 15.12
-}
-``` 
+Swagger url: http://localhost:8080/swagger-ui/index.html
 
 ## How to access database
 ### Connection details when run with local Java
@@ -100,7 +99,7 @@ In this case the project use H2 Database Engine
 
 **Password :** freeaccess
 
-### Connection details when run with Docker Compose
+### Connection details when run with Docker
 In this case the project use Mysql database inside Docker container
 
 **Hostname :** localhost
