@@ -34,6 +34,59 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+#      links:
+#        - node-exporter:node-exporter
+
+
+#  node-exporter:
+#    image: prom/node-exporter:latest
+#    network_mode: host
+#    container_name: monitoring_node_exporter
+#    restart: unless-stopped
+#    expose:
+#      - 9100
+  #observability/grafana/provisioning/datasources/datasources.yaml
+
+
+  prometheus:
+    image: prom/prometheus:v2.35.0
+    network_mode: host
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./observability/prometheus:/etc/prometheus/
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yaml"
+
+  grafana:
+    image: grafana/grafana-oss:11.1.5
+    pull_policy: always
+    network_mode: host
+    container_name: grafana
+    restart: unless-stopped
+    user: root
+    volumes:
+      - ./observability/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./observability/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    #    environment:
+#      - GF_SECURITY_ADMIN_PASSWORD=admin
+#      - GF_USERS_ALLOW_SIGN_UP=false
+#      - GF_SERVER_DOMAIN=localhost
+#      # Enabled for logging
+#      - GF_LOG_MODE=console file
+#      - GF_LOG_FILTERS=alerting.notifier.slack:debug alertmanager:debug ngalert:debug
+
+    environment:
+      - GF_DEFAULT_APP_MODE=development
+      - GF_LOG_LEVEL=debug
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin # grants admin role to anonymous access
+      - GF_AUTH_ANONYMOUS_ENABLED=true # removes login 1/2
+      - GF_AUTH_BASIC_ENABLED=false # removes login 2/2
+      - GF_FEATURE_TOGGLES_ENABLE=alertingSimplifiedRouting
+#      # Enabled for logging
+#      - GF_LOG_MODE=console file
+#      - GF_LOG_FILTERS=alerting.notifier.slack:debug alertmanager:debug ngalert:debug
+
 volumes:
   dbdata:
     driver: local
