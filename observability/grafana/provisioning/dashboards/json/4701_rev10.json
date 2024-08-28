@@ -3361,8 +3361,8 @@
         "allFormat": "glob",
         "current": {
           "selected": false,
-          "text": "localhost:8080",
-          "value": "localhost:8080"
+          "text": "start-spring-api:8080",
+          "value": "start-spring-api:8080"
         },
         "datasource": {
           "type": "prometheus",

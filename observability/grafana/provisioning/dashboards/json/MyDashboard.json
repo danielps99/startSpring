@@ -207,7 +207,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "jvm_memory_used_bytes",
+          "expr": "jvm_memory_used_bytes/1048576",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -217,7 +217,7 @@
           "useBackend": false
         }
       ],
-      "title": "Jvm_memory_used_bytes",
+      "title": "Jvm_memory_used_bytes (MB)",
       "type": "timeseries"
     },
     {

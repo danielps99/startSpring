@@ -50,9 +50,11 @@ services:
 
   prometheus:
     image: prom/prometheus:v2.35.0
-    network_mode: host
+#    network_mode: host
     container_name: prometheus
     restart: unless-stopped
+    ports:
+      - "9090:9090"
     volumes:
       - ./observability/prometheus:/etc/prometheus/
     command:
@@ -61,9 +63,11 @@ services:
   grafana:
     image: grafana/grafana-oss:11.1.5
     pull_policy: always
-    network_mode: host
+#    network_mode: host
     container_name: grafana
     restart: unless-stopped
+    ports:
+      - "3000:3000"
     user: root
     volumes:
       - ./observability/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
