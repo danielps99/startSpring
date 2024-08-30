@@ -8,6 +8,8 @@ services:
     ports:
       - "8080:8080"
       - "5005:5005"
+    volumes:
+      - promtail_log:/deployjava/logs
     depends_on:
       start-spring-db:
         condition: service_healthy
@@ -90,7 +92,34 @@ services:
 #      # Enabled for logging
 #      - GF_LOG_MODE=console file
 #      - GF_LOG_FILTERS=alerting.notifier.slack:debug alertmanager:debug ngalert:debug
+    depends_on:
+      - prometheus
+      - loki
+
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./observability/loki:/etc/loki
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:2.0.0
+    container_name: promtail
+    ports:
+      - "9080:9080"
+    volumes:
+      - ./observability/promtail:/etc/promtail
+      - promtail_log:/var/log
+    depends_on:
+      - loki
 
 volumes:
+  app_data: { }
+  promtail_log:
+    name: promtail_log
+
   dbdata:
     driver: local
