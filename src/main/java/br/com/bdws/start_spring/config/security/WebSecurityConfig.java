@@ -40,6 +40,7 @@ public class WebSecurityConfig {
                 .requestMatchers(
                         "/error",
                         "/h2-console/**",
+                        "/actuator/prometheus",
                         "/swagger-ui/**",
                         "/v3/api-docs/**"
                 ).permitAll()

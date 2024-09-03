@@ -8,6 +8,8 @@ services:
     ports:
       - "8080:8080"
       - "5005:5005"
+    volumes:
+      - promtail_log:/deployjava/logs
     depends_on:
       start-spring-db:
         condition: service_healthy
@@ -18,7 +20,7 @@ services:
   start-spring-db:
     container_name: start-spring-db
     image: mysql:8.0
-    restart: always
+    restart: unless-stopped
     environment:
       - MYSQL_DATABASE=startSpringDb
       - MYSQL_ROOT_PASSWORD=root
@@ -34,6 +36,61 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  prometheus:
+    image: prom/prometheus:v2.35.0
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus_config.yaml:/etc/prometheus/prometheus_config.yaml
+    command:
+      - "--config.file=/etc/prometheus/prometheus_config.yaml"
+
+  grafana:
+    image: grafana/grafana-oss:11.1.5
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    user: root
+    volumes:
+      - ./observability/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./observability/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    environment:
+      - GF_DEFAULT_APP_MODE=development
+      - GF_LOG_LEVEL=debug
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin # grants admin role to anonymous access. Do not do this in real environment
+      - GF_AUTH_ANONYMOUS_ENABLED=true # removes login 1/2. Do not do this in real environment
+      - GF_AUTH_BASIC_ENABLED=false # removes login 2/2. Do not do this in real environment
+    depends_on:
+      - prometheus
+      - loki
+
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./observability/loki-config.yaml:/etc/loki/loki-config.yaml
+    command: -config.file=/etc/loki/loki-config.yaml
+
+  promtail:
+    image: grafana/promtail:2.0.0
+    container_name: promtail
+    ports:
+      - "9080:9080"
+    volumes:
+      - ./observability/promtail_config.yml:/etc/promtail/promtail_config.yml
+      - promtail_log:/var/log
+    command: -config.file=/etc/promtail/promtail_config.yml
+    depends_on:
+      - loki
+
 volumes:
+  promtail_log:
+    name: promtail_log
   dbdata:
     driver: local

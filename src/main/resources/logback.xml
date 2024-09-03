@@ -10,7 +10,7 @@
     </appender>
 
     <appender name="FILELOG" class="ch.qos.logback.core.FileAppender">
-        <File>logs/${byMinute}.log</File>
+        <File>logs/start-spring-api/${byMinute}.log</File>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>%d{HH:mm:ss.SSS} %-5level [%-70.70logger{70}] - %msg%n</pattern>
         </encoder>
