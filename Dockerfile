@@ -1,4 +1,4 @@
-FROM maven:3-openjdk-17 as builder
+FROM maven:3-openjdk-17-slim AS builder
 WORKDIR /buildApp
 COPY ./pom.xml .
 COPY ./src ./src
