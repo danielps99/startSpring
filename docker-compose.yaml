@@ -29,6 +29,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
+      - ./create-database.sql:/docker-entrypoint-initdb.d/create-database.sql
       - dbdata:/var/lib/mysql
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
@@ -88,6 +89,48 @@ services:
     command: -config.file=/etc/promtail/promtail_config.yml
     depends_on:
       - loki
+#
+#  keycloak:
+#    image: keycloak/keycloak:25.0
+#    container_name: keycloak
+#    ports:
+#      - "8081:8080"
+
+  keycloak_web:
+    image: quay.io/keycloak/keycloak:23.0.7
+    container_name: keycloak_web
+    environment:
+      KC_DB: mysql
+      KC_DB_URL: jdbc:mysql://start-spring-db:3306/keycloak_db
+#      KC_DB_URL: jdbc:mysql://start-spring-db:3306/database1
+#      KC_DB_URL: jdbc:mysql://start-spring-db:3306/meu_schema?createDatabaseIfNotExist=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true&useSSL=false
+      KC_DB_USERNAME: developer
+      KC_DB_PASSWORD: freeaccess
+
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8081
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+
+      KC_LOG_LEVEL: info
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: start-dev
+    depends_on:
+      - start-spring-db
+    ports:
+      - 8081:8080
+#
+#  keycloakdb:
+#    image: postgres:15
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#    environment:
+#      POSTGRES_DB: keycloak
+#      POSTGRES_USER: keycloak
+#      POSTGRES_PASSWORD: password
 
 volumes:
   promtail_log:
