@@ -7,9 +7,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api")
@@ -28,10 +32,19 @@ public class ProductController {
         return service.save(dto);
     }
 
+    @GetMapping("/userinfo")
+    public Map<String, Object> getUserInfo(@AuthenticationPrincipal Jwt principal) {
+        // The JWT token contains claims such as sub, preferred_username, roles, etc.
+        return principal.getClaims(); // Returns all JWT claims
+    }
+
     @GetMapping("/product")
     @Operation(
             summary =  "Fetch all products in the database.",
             description = "Fetch all products in the database. No filter parameter is allowed.")
+//    @PreAuthorize("hasRole('daniel')")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<ProductDto> findAll() {
         logger.debug("Logger debug apenas teste");
         logger.info("Logger info apenas teste");
