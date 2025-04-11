@@ -1,0 +1,43 @@
+name: CI Pipeline - Java with Maven
+
+on:
+  push:
+    branches:
+      - teste_pipeline
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Still required, but we override with a Docker container
+
+    container: maven:3-openjdk-17  # Uses Maven + JDK 17 preconfigured. With this, commented name: Set up JDK 17 is not necessary
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+#      - name: Set up JDK 17
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: 'temurin'
+#          java-version: '17'
+#          cache: 'maven'
+
+      - name: Verify Maven and Java Version
+        run: |
+          java -version
+          mvn -version
+
+      - name: Build and Test with Maven
+        run: mvn clean verify
+
+      - name: Package the Application
+        run: mvn package -DskipTests
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: packaged-app
+          path: target/*.jar
