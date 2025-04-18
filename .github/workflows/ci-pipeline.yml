@@ -60,4 +60,4 @@ jobs:
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-java-app:latest
             docker stop my-java-app || true
             docker rm my-java-app || true
-            docker run -d --name my-java-app -p 80:8080 ${{ secrets.DOCKERHUB_USERNAME }}/my-java-app:latest
+            docker run -d --name my-java-app -p 81:8080 ${{ secrets.DOCKERHUB_USERNAME }}/my-java-app:latest
