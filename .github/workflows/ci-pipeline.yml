@@ -1,0 +1,72 @@
+name: CI Pipeline - Java with Maven and Docker
+
+on:
+  push:
+    branches:
+      - feature/ci-cd-aws-ec2-with-docker
+  pull_request:
+    branches:
+      - feature/ci-cd-aws-ec2-with-docker
+
+jobs:
+  build:
+    name: Build, Test, Push, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests=false
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: packaged-app
+          path: target/*.jar
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          context: .
+          file: Dockerfile.ciCdAwsEc2
+          push: true  # set to true if you're pushing to a registry
+          tags: start-spring-app:${{ env.APP_VERSION }}
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract version from pom.xml and put in environment to use in "${{ env.APP_VERSION }}"
+        id: extract_version
+        run: echo "APP_VERSION=$(grep '<version>.*-SNAPSHOT</version>' pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')" >> $GITHUB_ENV
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/start-spring-app:${{ env.APP_VERSION }}
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/start-spring-app:${{ env.APP_VERSION }}
+            docker stop start-spring-app || true
+            docker rm start-spring-app || true
+            docker run -d --name start-spring-app -p 80:8080 ${{ secrets.DOCKERHUB_USERNAME }}/start-spring-app:${{ env.APP_VERSION }}
