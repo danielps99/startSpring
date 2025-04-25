@@ -10,7 +10,8 @@
     </parent>
     <groupId>br.com.br</groupId>
     <artifactId>startSpring</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <!-- Should keep the '-SNAPSHOT' on the final to be used by ci-cd change the image tag-->
+    <version>1.0.1-SNAPSHOT</version>
     <name>startSpring</name>
     <description>Project Spring without dependency. I am intended to add dependencies gradually.
     </description>

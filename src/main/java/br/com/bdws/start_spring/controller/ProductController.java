@@ -22,7 +22,7 @@ public class ProductController {
 
     @PostMapping("/product")
     @Operation(
-            summary =  "Create or update a product.",
+            summary =  "Create or update a product MODIFICADO.",
             description = "Create or update a product. To create, remove id field.")
     public Long save(@RequestBody ProductDto dto) {
         return service.save(dto);

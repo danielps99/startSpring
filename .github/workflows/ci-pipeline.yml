@@ -1,0 +1,89 @@
+name: CI Pipeline - Java with Maven and Docker
+
+on:
+  push:
+    branches:
+      - feature/ci-cd-aws-ec2-with-docker
+  pull_request:
+    branches:
+      - feature/ci-cd-aws-ec2-with-docker
+
+jobs:
+  build:
+    name: Build, Test, Push, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests=false
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: packaged-app
+          path: target/*.jar
+
+      - name: Extract version from pom.xml and put in environment to use in 'env.APP_VERSION'
+        id: extract_version
+        run: echo "APP_VERSION=$(grep '<version>.*-SNAPSHOT</version>' pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.ciCdAwsEc2
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/start-spring-app:${{ env.APP_VERSION }}
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::842675985110:role/RoleForGithubWIthSsmAccess
+          aws-region: us-east-1
+
+      - name: Retrieve DB password from AWS Secrets Manager
+        id: get_db_secret
+        run: |
+          DB_PASSWORD=$(aws secretsmanager get-secret-value \
+            --secret-id MY_DB_SECRET \
+            --query 'SecretString' \
+            --output text)
+          echo "DB_PASSWORD=$DB_PASSWORD" >> $GITHUB_ENV
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/start-spring-app:${{ env.APP_VERSION }}
+            docker stop start-spring-app || true
+            docker rm start-spring-app || true
+            docker run -e PROFILE=docker_on_aws_ec2_instance \
+                       -e ADDITIONAL_OPTS="-Xmx256m -Xms128m" \
+                       -e DB_PASSWORD=${{ env.DB_PASSWORD }} \
+                       -d --name start-spring-app \
+                       --network springnet \
+                       -m 384m --memory-swap=384m \
+                       -p 80:8080 \
+                       ${{ secrets.DOCKERHUB_USERNAME }}/start-spring-app:${{ env.APP_VERSION }}
