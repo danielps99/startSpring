@@ -1,10 +1,10 @@
-FROM maven:3-openjdk-17 as builder
+FROM maven:3-eclipse-temurin-17 as builder
 WORKDIR /buildApp
 COPY ./pom.xml .
 COPY ./src ./src
 RUN --mount=type=cache,target=/root/.m2 --mount=type=cache,target=/opt/buildApp/target mvn install -DskipTests
 
-FROM openjdk:17
+FROM eclipse-temurin:17-jre
 
 ARG PROFILE
 ARG ADDITIONAL_OPTS

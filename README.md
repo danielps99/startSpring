@@ -38,17 +38,17 @@ You can compile and run inside docker container, or compile locally and run insi
 ### Compile and run inside docker
 The command bellow run application with tests. 
 ```
-    docker-compose up --build --force-recreate start-spring-api
+    docker compose up --build --force-recreate start-spring-api
 ```
 The command bellow run application with no tests.
 ```
-    DOCKERFILE=./Dockerfile.skipTests docker-compose up --build --force-recreate start-spring-api
+    DOCKERFILE=./Dockerfile.skipTests docker compose up --build --force-recreate start-spring-api
 ```
 ### Compile locally and run inside docker
 The first command bellow compile the project with tests. The second command run application.
 ```
     mvn clean install
-    DOCKERFILE=./Dockerfile.requireLocalMaven docker-compose up --build --force-recreate start-spring-api
+    DOCKERFILE=./Dockerfile.requireLocalMaven docker compose up --build --force-recreate start-spring-api
 ```
 
 ## Run with local Java and no docker
